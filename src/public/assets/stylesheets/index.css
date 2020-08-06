@@ -23,18 +23,45 @@ footer {
 /* -------------------  TABLET  --------------------- */
 @media (min-width: 768px) {
     /* use mobile */
+    .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        margin: auto;
+    }
 }
 
 /* -------------------  DESKTOP  -------------------- */
 
 @media (min-width: 1224px) {
     /* use mobile */
+    .loader {
+        border: 20px solid #f3f3f3; /* Light grey */
+        border-top: 20px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 200px;
+        height: 200px;
+        animation: spin 2s linear infinite;
+        margin: auto;
+    }
 }
 
 /* -------------------  LARGE SCREENS  -------------- */
 
 @media (min-width: 1824px) {
     /* use mobile */
+    .loader {
+        border: 20px solid #f3f3f3; /* Light grey */
+        border-top: 20px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 300px;
+        height: 300px;
+        animation: spin 2s linear infinite;
+        margin: auto;
+    }
 }
 
 /* Style the tab */
