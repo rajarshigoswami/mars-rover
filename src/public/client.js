@@ -1,8 +1,8 @@
 let store = {
-    user: { name: "Student" },
+    apod: Immutable.Map({}),
     apod: [],
     defaultTab: "Curiosity",
-    rovers: ["Curiosity", "Opportunity", "Spirit"],
+    rovers: Immutable.List(["Curiosity", "Opportunity", "Spirit"]),
 };
 
 // add our markup to the page
@@ -18,9 +18,40 @@ const render = async (root, state) => {
     showSlides(1);
 };
 
+//pure function
+const roversList = (rovers, defaultTab) => {
+    return rovers
+        .map(
+            (rover) =>
+                `<button class="tablinks ${
+                    defaultTab === rover ? "active" : ""
+                }" onclick="switchRover(event, '${rover}')">${rover}</button>`
+        )
+        .join("");
+};
+
+const ImageCarousel = (images) => {
+    const imageLength = images.length;
+    const carousel = images.map((image, idx) => {
+        return `<div class="mySlides fade">
+                <div class="numbertext">${idx + 1} / ${imageLength}</div>
+                <img src="${image.img_src}" style="width:100%">
+                <div class="text">
+                ${image.rover.name} - ${image.camera.full_name}
+                <p> Launch Date: ${image.rover.launch_date}</p>
+                <p> Landing Date: ${image.rover.landing_date} </p>
+                <p> Status: ${image.rover.status}</p>
+                <p> Date: ${image.earth_date}</p>
+                </div>
+            </div>`;
+    });
+
+    return `<div class="slideshow-container"> ${carousel.join("")} <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+    <a class="next" onclick="plusSlides(1)">&#10095;</a> </div>`;
+};
 // create content
 const App = (state) => {
-    let { defaultTab } = store;
+    let { defaultTab, rovers } = store;
     const images = state[defaultTab] || [];
 
     return `
@@ -28,15 +59,7 @@ const App = (state) => {
         <main>
             <section>
                 <div class="tab">
-                    <button class="tablinks ${
-                        defaultTab == "Curiosity" ? "active" : ""
-                    }" onclick="switchRover(event, 'Curiosity')">Curiosity</button>
-                    <button class="tablinks ${
-                        defaultTab == "Opportunity" ? "active" : ""
-                    }" onclick="switchRover(event, 'Opportunity')">Opportunity</button>
-                    <button class="tablinks ${
-                        defaultTab == "Spirit" ? "active" : ""
-                    }" onclick="switchRover(event, 'Spirit')">Spirit</button>
+                    ${roversList(rovers, defaultTab)}
                 </div>
                 <div id="${defaultTab}" class="tabcontent active">
                     ${images.length > 0 ? ImageCarousel(images.slice(0, 10)) : LoadingContainer()}
@@ -82,25 +105,6 @@ const showSlides = (n) => {
     slides[slideIndex - 1].style.display = "block";
 };
 
-const ImageCarousel = (images) => {
-    const imageLength = images.length;
-    const carousel = images.map((image, idx) => {
-        return `<div class="mySlides fade">
-                <div class="numbertext">${idx + 1} / ${imageLength}</div>
-                <img src="${image.img_src}" style="width:100%">
-                <div class="text">
-                ${image.rover.name} - ${image.camera.full_name}
-                <p> Launch Date: ${image.rover.launch_date}</p>
-                <p> Landing Date: ${image.rover.landing_date} </p>
-                <p> Status: ${image.rover.status}</p>
-                <p> Date: ${image.earth_date}</p>
-                </div>
-            </div>`;
-    });
-
-    return `<div class="slideshow-container"> ${carousel.join("")} <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
-    <a class="next" onclick="plusSlides(1)">&#10095;</a> </div>`;
-};
 const LoadingContainer = () => {
     const { defaultTab } = store;
     if (!store[defaultTab]) {
