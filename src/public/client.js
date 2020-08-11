@@ -18,8 +18,8 @@ const render = async (root, state) => {
     showSlides(1);
 };
 
-//pure function
-const roversList = (rovers, defaultTab) => {
+const roversList = () => {
+    const { rovers, defaultTab } = store;
     return rovers
         .map(
             (rover) =>
@@ -59,7 +59,7 @@ const App = (state) => {
         <main>
             <section>
                 <div class="tab">
-                    ${roversList(rovers, defaultTab)}
+                    ${roversList()}
                 </div>
                 <div id="${defaultTab}" class="tabcontent active">
                     ${images.length > 0 ? ImageCarousel(images.slice(0, 10)) : LoadingContainer()}
@@ -90,8 +90,8 @@ const currentSlide = (n) => {
 };
 let slideIndex = 1;
 const showSlides = (n) => {
-    var i;
-    var slides = document.getElementsByClassName("mySlides");
+    let i;
+    const slides = document.getElementsByClassName("mySlides");
     if (slides.length === 0) return;
     if (n > slides.length) {
         slideIndex = 1;
