@@ -13,19 +13,6 @@ app.use(bodyParser.json());
 app.use("/", express.static(path.join(__dirname, "../public")));
 
 // your API calls
-
-// example API call
-app.get("/apod", async (req, res) => {
-    try {
-        let image = await fetch(`https://api.nasa.gov/planetary/apod?api_key=${process.env.API_KEY}`).then((res) =>
-            res.json()
-        );
-        res.send({ image });
-    } catch (err) {
-        console.log("error:", err);
-    }
-});
-
 app.get("/image", async (req, res) => {
     console.dir(req.query);
     const curr_date = req.query.curr_date;
@@ -36,7 +23,9 @@ app.get("/image", async (req, res) => {
         ).then((res) => res.json());
         res.send({ data });
     } catch (err) {
-        console.log("error:", err);
+        res.status(400).json({
+            message: "There was an error!",
+        });
     }
 });
 

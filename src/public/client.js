@@ -1,6 +1,4 @@
 let store = {
-    apod: Immutable.Map({}),
-    apod: [],
     defaultTab: "Curiosity",
     rovers: Immutable.List(["Curiosity", "Opportunity", "Spirit"]),
 };
@@ -12,6 +10,8 @@ const updateStore = (store, newState) => {
     store = Object.assign(store, newState);
     render(root, store);
 };
+
+const filterImages = (images) => images.slice(0, 10);
 
 const render = async (root, state) => {
     root.innerHTML = App(state);
@@ -29,8 +29,12 @@ const roversList = () => {
         )
         .join("");
 };
+const roversTab = () => {
+    return `<div class="tab">${roversList()} </div>`;
+};
 
-const ImageCarousel = (images) => {
+const ImageCarousel = (images, LoadingContainer) => {
+    if (!images || images.length <= 0) return LoadingContainer();
     const imageLength = images.length;
     const carousel = images.map((image, idx) => {
         return `<div class="mySlides fade">
@@ -51,7 +55,7 @@ const ImageCarousel = (images) => {
 };
 // create content
 const App = (state) => {
-    let { defaultTab, rovers } = store;
+    let { defaultTab } = store;
     const images = state[defaultTab] || [];
 
     return `
@@ -59,10 +63,10 @@ const App = (state) => {
         <main>
             <section>
                 <div class="tab">
-                    ${roversList()}
+                    ${roversTab()}
                 </div>
                 <div id="${defaultTab}" class="tabcontent active">
-                    ${images.length > 0 ? ImageCarousel(images.slice(0, 10)) : LoadingContainer()}
+                    ${ImageCarousel(images, LoadingContainer)}
                 </div>
             </section>
         </main>
@@ -85,9 +89,6 @@ const plusSlides = (n) => {
     showSlides((slideIndex += n));
 };
 
-const currentSlide = (n) => {
-    showSlides((slideIndex = n));
-};
 let slideIndex = 1;
 const showSlides = (n) => {
     let i;
@@ -102,7 +103,7 @@ const showSlides = (n) => {
     for (i = 0; i < slides.length; i++) {
         slides[i].style.display = "none";
     }
-    slides[slideIndex - 1].style.display = "block";
+    if (slides[slideIndex - 1]) slides[slideIndex - 1].style.display = "block";
 };
 
 const LoadingContainer = () => {
@@ -117,5 +118,5 @@ const getImageOfTheDay = (state) => {
     const currDate = new Date().toISOString().split("T")[0];
     fetch(`http://localhost:3000/image?curr_date=${currDate}&rover=${defaultTab.toLowerCase()}`)
         .then((res) => res.json())
-        .then((apod) => updateStore(store, { [defaultTab]: apod.data.photos }));
+        .then((apod) => updateStore(store, { [defaultTab]: filterImages(apod.data.photos) }));
 };
